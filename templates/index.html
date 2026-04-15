@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sales Data Entry Dashboard">
+    <title>Sales Entry - Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f8; color: #333; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+        .container { background-color: #fff; border: 1px solid #ddd; padding: 30px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); width: 100%; max-width: 800px; }
+        h2, h3 { color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 0; }
+        .form-group { margin-bottom: 15px; flex: 1; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        button:hover { background-color: #0056b3; }
+        .input-row { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 30px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+    <script>
+    let products = [];
+    let quantities = [];
+    let prices = [];
 
+    function addProduct() {
+        let product = document.getElementById("product").value;
+        let qty = document.getElementById("quantity").value;
+        let price = document.getElementById("price").value;
+
+        if(product === "" || qty === "" || price === ""){
+            alert("Please enter all fields");
+            return;
+        }
+
+        products.push(product);
+        quantities.push(qty);
+        prices.push(price);
+
+        let table = document.getElementById("productTable");
+        let row = table.insertRow();
+        row.insertCell(0).innerHTML = product;
+        row.insertCell(1).innerHTML = qty;
+        row.insertCell(2).innerHTML = price;
+
+        document.getElementById("product").value = "";
+        document.getElementById("quantity").value = "";
+        document.getElementById("price").value = "";
+    }
+
+    function submitData(){
+        if(products.length === 0) {
+            alert("Please add at least one product before analyzing");
+            return;
+        }
+
+        let form = document.getElementById("salesForm");
+        for(let i=0;i<products.length;i++){
+            let p = document.createElement("input");
+            p.type="hidden"; p.name="product"; p.value=products[i];
+            form.appendChild(p);
+
+            let q = document.createElement("input");
+            q.type="hidden"; q.name="quantity"; q.value=quantities[i];
+            form.appendChild(q);
+
+            let pr = document.createElement("input");
+            pr.type="hidden"; pr.name="price"; pr.value=prices[i];
+            form.appendChild(pr);
+        }
+        form.submit();
+    }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Enter Product Sales</h2>
+
+    <div class="input-row">
+        <div class="form-group">
+            <label for="product">Product</label>
+            <input type="text" id="product" placeholder="e.g. Laptop">
+        </div>
+        <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" placeholder="0">
+        </div>
+        <div class="form-group">
+            <label for="price">Price (₹)</label>
+            <input type="number" step="0.01" id="price" placeholder="0.00">
+        </div>
+        <button type="button" onclick="addProduct()">Add</button>
+    </div>
+
+    <h3>Products Added</h3>
+    <table id="productTable">
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </table>
+
+    <form id="salesForm" action="/analyze" method="post">
+        <button type="button" onclick="submitData()">Analyze Sales</button>
+    </form>
+    
+    <div class="text-center mt-20">
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+</body>
+</html>
